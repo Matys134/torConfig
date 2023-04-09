@@ -15,19 +15,25 @@ public class HelloController {
     @FXML
     void InstallTor() {
         //install tor on ubuntu
-try {
+        try {
             ProcessBuilder processBuilder = new ProcessBuilder("sudo", "apt-get", "install", "tor");
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-            if (exitCode == 0) {
-                System.out.println("Tor is installed.");
-            } else {
-                System.out.println("Tor is not installed.");
-            }
+            CheckTor(processBuilder);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void CheckTor(ProcessBuilder processBuilder) throws IOException, InterruptedException {
+        Process process = processBuilder.start();
+        int exitCode = process.waitFor();
+        if (exitCode == 0) {
+            System.out.println("Tor je nainstalován.");
+            isTorInstalled.setText("Tor je nainstalován.");
+        } else {
+            System.out.println("Tor není nainstalován.");
+            isTorInstalled.setText("Tor není nainstalován.");
+        }
     }
 
 
@@ -35,13 +41,7 @@ try {
     void checkIfTorInstalled() {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("which", "tor");
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-            if (exitCode == 0) {
-                System.out.println("Tor is installed.");
-            } else {
-                System.out.println("Tor is not installed.");
-            }
+            CheckTor(processBuilder);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
