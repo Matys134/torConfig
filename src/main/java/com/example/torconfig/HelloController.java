@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
 public class HelloController {
@@ -16,14 +17,19 @@ public class HelloController {
     void InstallTor() {
         //install tor on ubuntu
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "apt-get", "install", "tor");
-            CheckTor(processBuilder);
-        } catch (IOException | InterruptedException e) {
+            String[] command = {"sudo", "apt-get", "update", "&&", "sudo", "apt-get", "install", "tor"};
+            Process process = Runtime.getRuntime().exec(command);
+            BufferedReader reader = new BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            reader.close();
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
     private void CheckTor(ProcessBuilder processBuilder) throws IOException, InterruptedException {
         Process process = processBuilder.start();
         int exitCode = process.waitFor();
