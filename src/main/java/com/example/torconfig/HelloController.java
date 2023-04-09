@@ -1,55 +1,56 @@
 package com.example.torconfig;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-
 public class HelloController {
 
-    public Button installTor;
-    public Text isTorInstalled;
-    public Button checkTor;
+    @FXML
+    private Button checkTor;
 
     @FXML
-    void InstallTor() {
-        //install tor on ubuntu
+    private Button installTor;
+
+    @FXML
+    private Text isTorInstalled;
+
+    @FXML
+    void checkIfTorInstalled(ActionEvent event) {
         try {
-            String[] command = {"sudo", "apt-get", "update", "&&", "sudo", "apt-get", "install", "tor"};
-            Process process = Runtime.getRuntime().exec(command);
-            BufferedReader reader = new BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+            Process process = Runtime.getRuntime().exec("dkpg -l | grep tor");
+            process.waitFor();
+            int exitCode = process.exitValue();
+
+            if (exitCode == 0) {
+                isTorInstalled.setText("Tor is installed");
+            } else {
+                isTorInstalled.setText("Tor is not installed");
             }
-            reader.close();
-        }
-        catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-    private void CheckTor(ProcessBuilder processBuilder) throws IOException, InterruptedException {
-        Process process = processBuilder.start();
-        int exitCode = process.waitFor();
-        if (exitCode == 0) {
-            System.out.println("Tor je nainstalován.");
-            isTorInstalled.setText("Tor je nainstalován.");
-        } else {
-            System.out.println("Tor není nainstalován.");
-            isTorInstalled.setText("Tor není nainstalován.");
-        }
-    }
 
+        }
+    }
 
     @FXML
-    void checkIfTorInstalled() {
+    void installTor(ActionEvent event) {
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("which", "tor");
-            CheckTor(processBuilder);
-        } catch (IOException | InterruptedException e) {
+            Process process = Runtime.getRuntime().exec("sudo apt-get install tor");
+            process.waitFor();
+            int exitCode = process.exitValue();
+
+            if (exitCode == 0) {
+                isTorInstalled.setText("Tor is installed");
+            } else {
+                isTorInstalled.setText("Tor is not installed");
+            }
+        } catch (Exception e) {
             e.printStackTrace();
+
         }
+
     }
+
 }
